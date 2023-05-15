@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<definitions id="Definition"
+             targetNamespace="http://www.example.org/MinimalExample"
+             typeLanguage="http://www.java.com/javaTypes"
+             expressionLanguage="http://www.mvel.org/2.0"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:tns="http://www.jboss.org/drools">
+
+  <itemDefinition id="_sItem" structureRef="String" />
+
+  <message id="_2_Message" itemRef="_sItem" />
+  <message id="_3_Message" itemRef="_sItem" />
+
+  <process processType="Private" isExecutable="true" id="sendAndReceiveTask" name="sendAndReceiveTask" >
+
+    <!-- process variables -->
+    <property id="res" itemSubjectRef="_sItem"/>
+
+    <!-- nodes -->
+    <startEvent id="_1" name="StartProcess" />
+    <sendTask id="_2" name="sendHello" messageRef="_2_Message" implementation="Other" >
+      <ioSpecification>
+        <dataInput id="_2_param" name="sendMessage" />
+        <inputSet>
+          <dataInputRefs>_2_param</dataInputRefs>
+        </inputSet>
+        <outputSet/>
+      </ioSpecification>
+      <dataInputAssociation>
+        <sourceRef>res</sourceRef>
+        <targetRef>_2_param</targetRef>
+      </dataInputAssociation>
+    </sendTask>
+
+    <receiveTask id="_3" name="receiveHello" messageRef="_3_Message" implementation="Other" >
+      <ioSpecification>
+        <dataOutput id="_3_result" name="receiveMessage" />
+        <inputSet/>
+        <outputSet>
+          <dataOutputRefs>_3_result</dataOutputRefs>
+        </outputSet>
+      </ioSpecification>
+      <dataOutputAssociation>
+        <sourceRef>_3_result</sourceRef>
+        <targetRef>res</targetRef>
+      </dataOutputAssociation>
+    </receiveTask>
+    <endEvent id="_4" name="EndProcess" >
+        <terminateEventDefinition/>
+    </endEvent>
+
+    <!-- connections -->
+    <sequenceFlow id="_1-_2" sourceRef="_1" targetRef="_2" />
+    <sequenceFlow id="_2-_3" sourceRef="_2" targetRef="_3" />
+    <sequenceFlow id="_3-_4" sourceRef="_3" targetRef="_4" />
+
+  </process>
+
+</definitions>

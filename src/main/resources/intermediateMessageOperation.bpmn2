@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<definitions id="Definition"
+             targetNamespace="http://www.example.org/MinimalExample"
+             typeLanguage="http://www.java.com/javaTypes"
+             expressionLanguage="http://www.mvel.org/2.0"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:tns="http://www.jboss.org/drools">
+
+  <itemDefinition id="_xItem" structureRef="String" />
+
+  <itemDefinition id="_2_MessageType" structureRef="String" />
+  <message id="helloMessage" itemRef="_2_MessageType" />
+
+  <process processType="Private" isExecutable="true" id="intermediateMessage" name="intermediateMessage" >
+
+    <!-- process variables -->
+    <property id="x" itemSubjectRef="_xItem"/>
+    <property id="y" itemSubjectRef="_xItem"/>
+
+    <!-- nodes -->
+    <startEvent id="_1" name="StartProcess" />
+
+    <intermediateThrowEvent id="_2" name="MessageEvent" >
+      <dataInput id="_2_Input" name="throwParam" />
+      <dataInputAssociation>
+        <sourceRef>x</sourceRef>
+        <targetRef>_2_Input</targetRef>
+        <transformation language="http://www.java.com/javascript">throwParam.toUpperCase()</transformation>
+      </dataInputAssociation>
+      <inputSet>
+        <dataInputRefs>_2_Input</dataInputRefs>
+      </inputSet>
+      <messageEventDefinition messageRef="helloMessage"/>
+    </intermediateThrowEvent>
+
+    <scriptTask id="_3" name="Event" >
+      <script>System.out.println("消息抛出完成！");</script>
+    </scriptTask>
+
+    <userTask id="_3.5" name="User Task">
+    </userTask>
+
+    <intermediateCatchEvent id="_4" name="event" >
+      <dataOutput id="_4_Output" name="catchParam" />
+      <dataOutputAssociation>
+        <sourceRef>_4_Output</sourceRef>
+        <targetRef>x</targetRef>
+        <transformation language="http://www.java.com/javascript">catchParam.toUpperCase()</transformation>
+      </dataOutputAssociation>
+      <outputSet>
+        <dataOutputRefs>_4_Output</dataOutputRefs>
+      </outputSet>
+      <messageEventDefinition messageRef="helloMessage"/>
+    </intermediateCatchEvent>
+
+    <scriptTask id="_5" name="Event" >
+      <script>System.out.println("消息捕获完成！最新的x值为："+x);</script>
+    </scriptTask>
+
+    <endEvent id="_6" name="EndEvent" />
+
+    <!-- connections -->
+    <sequenceFlow id="_1-_2" sourceRef="_1" targetRef="_2" />
+    <sequenceFlow id="_2-_3" sourceRef="_2" targetRef="_3" />
+    <sequenceFlow id="_3-_3.5" sourceRef="_3" targetRef="_3.5" />
+    <sequenceFlow id="_3.5-_4" sourceRef="_3.5" targetRef="_4" />
+    <sequenceFlow id="_4-_5" sourceRef="_4" targetRef="_5" />
+    <sequenceFlow id="_5-_6" sourceRef="_5" targetRef="_6" />
+
+    <!--通过边界事件触发消息捕获-->
+    <boundaryEvent id="_7" name="Boundary event" attachedToRef="_3.5" cancelActivity="false">
+      <dataOutput id="_7_Output" name="event"/>
+      <outputSet id="OutputSet_1">
+        <dataOutputRefs>_7_Output</dataOutputRefs>
+      </outputSet>
+      <dataOutputAssociation id="DataOutputAssociation_1">
+        <sourceRef>_7_Output</sourceRef>
+        <targetRef>y</targetRef>
+      </dataOutputAssociation>
+      <messageEventDefinition id="MessageEventDefinition_1" messageRef="helloMessage"/>
+    </boundaryEvent>
+
+    <scriptTask id="_8" name="Event" >
+      <script>System.out.println("消息捕获完成！最新的y值为："+y);</script>
+    </scriptTask>
+
+    <endEvent id="_9" name="End1">
+    </endEvent>
+
+    <sequenceFlow id="_7-_8" sourceRef="_7" targetRef="_8" />
+    <sequenceFlow id="_8-_9" sourceRef="_8" targetRef="_9" />
+
+  </process>
+
+</definitions>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:tns="http://www.jboss.org/drools"
+             targetNamespace="http://www.jboss.org/drools"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd"
+             id="Definition"
+             expressionLanguage="http://www.mvel.org/2.0"
+             typeLanguage="http://www.java.com/javaTypes">
+
+  <process id="multipleStart" tns:packageName="defaultPackage" name="multipleStart" isExecutable="true" processType="Private">
+    <startEvent id="_1.1" name="StartNone">
+      <outgoing>SequenceFlow_1.1-2.1</outgoing>
+    </startEvent>
+    <startEvent id="_1.2" name="StartTimer">
+      <outgoing>SequenceFlow_1.2-2.2</outgoing>
+      <timerEventDefinition id="TimerEventDefinition_1">
+        <timeCycle xsi:type="tFormalExpression" id="_FormalExpression_2">500ms</timeCycle>
+      </timerEventDefinition>
+    </startEvent>
+
+    <scriptTask id="_2.1" name="print startNone" >
+      <incoming>SequenceFlow_1.1-2.1</incoming>
+      <outgoing>SequenceFlow_2.1-3</outgoing>
+      <script>System.out.println("startNone starting...");</script>
+    </scriptTask>
+    <scriptTask id="_2.2" name="print startTimer" >
+      <incoming>SequenceFlow_1.2-2.2</incoming>
+      <outgoing>SequenceFlow_2.2-3</outgoing>
+      <script>System.out.println("startTimer starting...");</script>
+    </scriptTask>
+
+    <exclusiveGateway id="_3" gatewayDirection="Converging">
+      <incoming>SequenceFlow_2.1-3</incoming>
+      <incoming>SequenceFlow_2.2-3</incoming>
+      <outgoing>SequenceFlow_3-4</outgoing>
+    </exclusiveGateway>
+
+    <scriptTask id="_4" name="Hello" >
+      <incoming>SequenceFlow_3-4</incoming>
+      <outgoing>SequenceFlow_4-5</outgoing>
+      <script>System.out.println("multipleStart event triggered: hello world");</script>
+    </scriptTask>
+
+    <endEvent id="_5">
+      <incoming>SequenceFlow_4-5</incoming>
+    </endEvent>
+
+    <sequenceFlow id="SequenceFlow_1.1-2.1" tns:priority="1" name="" sourceRef="_1.1" targetRef="_2.1"/>
+    <sequenceFlow id="SequenceFlow_1.2-2.2" tns:priority="1" name="" sourceRef="_1.2" targetRef="_2.2"/>
+    <sequenceFlow id="SequenceFlow_2.1-3" tns:priority="1" sourceRef="_2.1" targetRef="_3"/>
+    <sequenceFlow id="SequenceFlow_2.2-3" tns:priority="1" sourceRef="_2.2" targetRef="_3"/>
+    <sequenceFlow id="SequenceFlow_3-4" tns:priority="1" sourceRef="_3" targetRef="_4"/>
+    <sequenceFlow id="SequenceFlow_4-5" tns:priority="1" sourceRef="_4" targetRef="_5"/>
+
+  </process>
+
+</definitions>

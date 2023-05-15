@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:tns="http://www.jboss.org/drools"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd"
+             id="Definitions_1"
+             expressionLanguage="http://www.mvel.org/2.0"
+             targetNamespace="http://www.jboss.org/drools"
+             typeLanguage="http://www.java.com/javaTypes">
+
+  <error id="error" errorCode="com.example.qj.demo.exception.MyError"/>
+
+  <process id="errorStart" tns:version="1" tns:packageName="defaultPackage" tns:adHoc="false" name="Default Process" isExecutable="true">
+    <startEvent id="StartEvent_1" name="start">
+    </startEvent>
+
+    <userTask id="UserTask_1" name="User Task 1">
+    </userTask>
+
+    <scriptTask id="ScriptTask_1" name="Script Task 1">
+      <script>System.out.println(&quot;Event main process triggered&quot;);</script>
+    </scriptTask>
+
+    <endEvent id="EndEvent_1" name="end">
+      <!--<errorEventDefinition id="ErrorEventDefinition_1" errorRef="error"/>-->
+    </endEvent>
+
+    <sequenceFlow id="SequenceFlow_1" tns:priority="1" name="" sourceRef="StartEvent_1" targetRef="UserTask_1"/>
+    <sequenceFlow id="SequenceFlow_2" tns:priority="1" name="" sourceRef="UserTask_1" targetRef="ScriptTask_1"/>
+    <sequenceFlow id="SequenceFlow_3" tns:priority="1" sourceRef="ScriptTask_1" targetRef="EndEvent_1"/>
+
+
+
+    <subProcess id="SubProcess_1" name="Sub Process 1" triggeredByEvent="true">
+
+      <startEvent id="StartEvent_2" name="start-sub">
+        <errorEventDefinition id="ErrorEventDefinition_2" errorRef="error"/>
+      </startEvent>
+
+      <scriptTask id="ScriptTask_2" name="Script Task 2">
+        <script>System.out.println(&quot;Event sub process triggered&quot;);</script>
+      </scriptTask>
+
+      <endEvent id="EndEvent_2" name="end-sub">
+      </endEvent>
+
+      <sequenceFlow id="SequenceFlow_4" tns:priority="1" sourceRef="StartEvent_2" targetRef="ScriptTask_2"/>
+      <sequenceFlow id="SequenceFlow_5" tns:priority="1" sourceRef="ScriptTask_2" targetRef="EndEvent_2"/>
+
+    </subProcess>
+
+  </process>
+
+</definitions>

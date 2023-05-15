@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<definitions id="Definition"
+             typeLanguage="http://www.java.com/javaTypes"
+             expressionLanguage="http://www.mvel.org/2.0"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd"
+             targetNamespace="http://www.jboss.org/drools"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:tns="http://www.jboss.org/drools">
+
+  <itemDefinition id="_midNumItem" structureRef="java.lang.Double" />
+  <itemDefinition id="_midStrItem" structureRef="java.lang.String" />
+
+  <message id="_3_InOneMessage" itemRef="_midNumItem" />
+  <message id="_3_InTwoMessage" itemRef="_midNumItem" />
+  <interface id="_3_ServiceInterface" name="com.example.qj.demo.service.CalcTwoNumberService">
+    <operation id="_3_ServiceOperation" name="calcAAndB">
+      <inMessageRef>_3_InOneMessage</inMessageRef>
+      <inMessageRef>_3_InTwoMessage</inMessageRef>
+    </operation>
+  </interface>
+
+
+  <process processType="Private" isExecutable="true" id="simple" name="simple" tns:packageName="defaultPackage" >
+    <!-- process variables -->
+    <property id="mid_a" itemSubjectRef="_midNumItem"/>
+    <property id="mid_b" itemSubjectRef="_midNumItem"/>
+    <property id="mid_sum" itemSubjectRef="_midStrItem"/>
+
+    <!-- nodes -->
+    <startEvent id="_1" name="StartProcess" />
+    <userTask id="_2" name="input a,b" >
+      <ioSpecification>
+        <dataOutput id="_2_a" name="a" />
+        <dataOutput id="_2_b" name="b" />
+        <outputSet>
+            <dataOutputRefs>_2_a</dataOutputRefs>
+            <dataOutputRefs>_2_b</dataOutputRefs>
+        </outputSet>
+      </ioSpecification>
+
+      <dataOutputAssociation>
+        <sourceRef>_2_a</sourceRef>
+        <targetRef>mid_a</targetRef>
+      </dataOutputAssociation>
+
+      <dataOutputAssociation>
+        <sourceRef>_2_b</sourceRef>
+        <targetRef>mid_b</targetRef>
+      </dataOutputAssociation>
+
+      <potentialOwner>
+        <resourceAssignmentExpression>
+          <formalExpression>john</formalExpression>
+        </resourceAssignmentExpression>
+      </potentialOwner>
+    </userTask>
+
+    <serviceTask id="_3" name="calculate a+b" operationRef="_3_ServiceOperation" implementation="Other" >
+      <ioSpecification>
+        <dataInput id="_3_a" name="calca" />
+        <dataInput id="_3_b" name="calcb" />
+        <dataOutput id="_3_sum" name="sum" />
+
+        <inputSet>
+          <dataInputRefs>_3_a</dataInputRefs>
+        </inputSet>
+        <outputSet>
+          <dataOutputRefs>_3_sum</dataOutputRefs>
+        </outputSet>
+      </ioSpecification>
+
+      <dataInputAssociation>
+        <sourceRef>mid_a</sourceRef>
+        <targetRef>_3_a</targetRef>
+      </dataInputAssociation>
+
+      <dataInputAssociation>
+        <sourceRef>mid_b</sourceRef>
+        <targetRef>_3_b</targetRef>
+      </dataInputAssociation>
+
+      <dataOutputAssociation>
+        <sourceRef>_3_sum</sourceRef>
+        <targetRef>mid_sum</targetRef>
+      </dataOutputAssociation>
+    </serviceTask>
+
+    <scriptTask id="_4" name="print a+b" scriptFormat="http://www.java.com/java" >
+      <script>System.out.println("Result "+mid_sum);</script>
+    </scriptTask>
+
+    <endEvent id="_5" name="EndProcess" >
+        <terminateEventDefinition/>
+    </endEvent>
+
+    <!-- connections -->
+    <sequenceFlow id="_1-_2" sourceRef="_1" targetRef="_2" />
+    <sequenceFlow id="_2-_3" sourceRef="_2" targetRef="_3" />
+    <sequenceFlow id="_3-_4" sourceRef="_3" targetRef="_4" />
+    <sequenceFlow id="_4-_5" sourceRef="_4" targetRef="_5" />
+
+  </process>
+
+</definitions>

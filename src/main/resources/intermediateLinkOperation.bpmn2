@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions id="Definition"
+             targetNamespace="http://www.example.org/MinimalExample"
+             typeLanguage="http://www.java.com/javaTypes"
+             expressionLanguage="http://www.mvel.org/2.0"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd"
+             xmlns:tns="http://www.jboss.org/drools">
+ 
+  <process id='intermediateLink' name="intermediateLink" >
+      
+        <startEvent id='_1' name='start jump'/>
+    
+        <scriptTask id="_2" name="task before link">
+          <script>System.out.println("about to jump");</script>
+        </scriptTask>
+    
+        <intermediateThrowEvent id="_3" name="触发第一个连接点" >
+             <linkEventDefinition  name="nextPage">
+             </linkEventDefinition>
+        </intermediateThrowEvent>
+
+        <!--被触发的连接事件1-->
+        <intermediateCatchEvent id="_4" name="接收第一连接点触发" >
+             <linkEventDefinition name="nextPage">
+             </linkEventDefinition>  
+        </intermediateCatchEvent>
+    
+        <scriptTask id="_5" name="task after link">
+          <script>System.out.println("jumped");</script>
+        </scriptTask>
+    
+        <intermediateThrowEvent id="_5.1" name="触发第二个连接点" >
+            <linkEventDefinition  name="2ndPage">
+            </linkEventDefinition>
+        </intermediateThrowEvent>
+    
+        <!--被触发的连接中间事件2-->
+        <intermediateCatchEvent id="_6" name="接收第二连接点触发" >
+            <linkEventDefinition  name="2ndPage">
+            </linkEventDefinition>
+        </intermediateCatchEvent>
+    
+        <scriptTask id="_7" name=" 2nd TASK AFTER LINK">
+            <script>System.out.println("jumped 2");</script>
+        </scriptTask>
+
+        <endEvent id='_8' name='stop doing'/>
+
+      <sequenceFlow id='_1-_2' sourceRef='_1' targetRef="_2" />
+      <sequenceFlow id='_2-_3' sourceRef="_2" targetRef='_3' />
+
+      <sequenceFlow id='_4-_5' sourceRef='_4' targetRef='_5' />
+      <sequenceFlow id='_5-_5.1' sourceRef="_5" targetRef='_5.1' />
+      
+      <sequenceFlow id='_6-_7' sourceRef='_6' targetRef='_7' />
+      <sequenceFlow id='_7-_8' sourceRef='_7' targetRef='_8'/>
+      
+  </process>
+
+</definitions>
+

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<definitions id="Definition"
+             targetNamespace="http://www.example.org/MinimalExample"
+             typeLanguage="http://www.java.com/javaTypes"
+             expressionLanguage="http://www.mvel.org/2.0"
+             xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd"
+             xmlns:g="http://www.jboss.org/drools/flow/gpd"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:tns="http://www.jboss.org/drools">
+
+  <signal id="Signal_1" name="myVarSignal"/>
+  <itemDefinition id="_xItem" structureRef="String" />
+
+  <process processType="Private" isExecutable="true" id="intermediateSignal" name="intermediateSignal" >
+
+    <!-- process variables -->
+    <property id="x" itemSubjectRef="_xItem"/>
+    <property id="y" itemSubjectRef="_xItem"/>
+
+    <!-- nodes -->
+    <startEvent id="_1" name="StartProcess"  isInterrupting="true"/>
+
+    <intermediateThrowEvent id="_2" name="SignalEvent" >
+      <dataInput id="_2_Input" />
+      <dataInputAssociation>
+        <sourceRef>x</sourceRef>
+        <targetRef>_2_Input</targetRef>
+      </dataInputAssociation>
+      <inputSet>
+        <dataInputRefs>_2_Input</dataInputRefs>
+      </inputSet>
+      <signalEventDefinition signalRef="Signal_1"/>
+    </intermediateThrowEvent>
+
+    <scriptTask id="_3" name="Script1" >
+      <script>System.out.println("中间信号事件抛出完成！");</script>
+    </scriptTask>
+
+
+    <intermediateCatchEvent id="_4" name="signalEvent" >
+      <dataOutput id="_4_Output" name="event" />
+      <outputSet>
+        <dataOutputRefs>_4_Output</dataOutputRefs>
+      </outputSet>
+
+      <dataOutputAssociation>
+        <sourceRef>_4_Output</sourceRef>
+        <targetRef>y</targetRef>
+      </dataOutputAssociation>
+
+      <signalEventDefinition signalRef="Signal_1"/>
+    </intermediateCatchEvent>
+
+    <scriptTask id="_5" name="Script2" >
+      <script>System.out.println(y);</script>
+    </scriptTask>
+
+    <endEvent id="_6" name="EndProcess" >
+        <terminateEventDefinition />
+    </endEvent>
+
+    <!-- connections -->
+    <sequenceFlow id="_1-_2" sourceRef="_1" targetRef="_2" />
+    <sequenceFlow id="_2-_3" sourceRef="_2" targetRef="_3" />
+    <sequenceFlow id="_3-_4" sourceRef="_3" targetRef="_4" />
+    <sequenceFlow id="_4-_5" sourceRef="_4" targetRef="_5" />
+    <sequenceFlow id="_5-_6" sourceRef="_5" targetRef="_6" />
+
+  </process>
+
+</definitions>

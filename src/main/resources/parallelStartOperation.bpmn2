@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions id="EAPK_CCE882F2_23D3_4e7e_80FE_6D8C0AF83CAA"
+				  targetNamespace="www.sparxsystems.com.au/bpmn20"
+				  xmlns:ssbp="www.sparxsystems.com.au/bpmn20"
+				  xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+				  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+				  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+				  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+				  exporter="Enterprise Architect"
+				  exporterVersion="10.0.1004">
+
+	<bpmn:itemDefinition id="paramItem" isCollection="false" structureRef="java.lang.String"/>
+	<bpmn:message id="param" name="param" itemRef="paramItem"/>
+	<bpmn:interface id="helloInterface" name="com.example.qj.demo.service.SayHello">
+		<bpmn:operation id="helloOperation" name="sayHello">
+			<bpmn:inMessageRef>param</bpmn:inMessageRef>
+		</bpmn:operation>
+	</bpmn:interface>
+
+	<bpmn:process id="parallelStart">
+		<bpmn:startEvent id="start" name="start" isInterrupting="true" parallelMultiple="true">
+		</bpmn:startEvent>
+
+
+		<bpmn:scriptTask id="script1" name="notify.done" startQuantity="1" completionQuantity="1" isForCompensation="false">
+			<bpmn:script>System.out.println("Done!");</bpmn:script>
+		</bpmn:scriptTask>
+
+		<bpmn:serviceTask id="service1" name="kp.ws.checkstatus" startQuantity="1" completionQuantity="1" isForCompensation="false" implementation="Other" operationRef="helloOperation">
+		</bpmn:serviceTask>
+
+		<bpmn:scriptTask id="script2" name="notify.calling ws" startQuantity="1" completionQuantity="1" isForCompensation="false">
+			<bpmn:script>System.out.println("Calling WS");</bpmn:script>
+		</bpmn:scriptTask>
+
+		<bpmn:endEvent id="end" name="end">
+		</bpmn:endEvent>
+
+		<bpmn:sequenceFlow id="sequece1" sourceRef="start" targetRef="script1"/>
+		<bpmn:sequenceFlow id="sequece2" sourceRef="script1" targetRef="service1"/>
+		<bpmn:sequenceFlow id="sequece3" sourceRef="service1" targetRef="script2"/>
+		<bpmn:sequenceFlow id="sequece4" sourceRef="script2" targetRef="end"/>
+	</bpmn:process>
+
+
+</bpmn:definitions>
